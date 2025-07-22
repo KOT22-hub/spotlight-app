@@ -1,0 +1,56 @@
+import { Loader } from '@/components/Loader'
+import { COLORS } from '@/constants/theme'
+import { api } from '@/convex/_generated/api'
+
+import { styles } from '@/styles/feed.styles'
+import { useQuery } from 'convex/react'
+import { Image } from 'expo-image'
+import React from 'react'
+import { ScrollView, Text, View } from 'react-native'
+
+const bookmarks = () => {
+  const bookmarkedPosts = useQuery(api.bookmark.getBookmarkedPosts)
+
+  if(bookmarkedPosts===undefined) return <Loader/>
+  // if(bookmarks.length===0) return <NoBookmarkFound/>
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>
+          Bookmarks
+
+        </Text>
+      </View>
+      {/* POSTS */}
+      <ScrollView contentContainerStyle={{padding:8,flexDirection:"row",flexWrap:"wrap"}}>
+        {
+          bookmarkedPosts.map((bookmarkpost)=>{
+            if(!bookmarkpost) return null
+            return (
+              <View key={bookmarkpost._id} style={{width:"33.33%",padding:1}}>
+
+                <Image source={bookmarkpost.imageUrl} style={{width:"100%",aspectRatio:1}} contentFit = "cover" transition={200} cachePolicy="memory-disk"/>
+
+              </View>
+            )
+          })
+        }
+
+      </ScrollView>
+    </View>
+  )
+}
+function NoBookmarkFound(){
+  return (
+    <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:COLORS.background}}>
+      <Text style={{color:COLORS.primary,fontSize:22}}>
+        No bookmark posts 
+
+
+      </Text>
+    </View>
+  )
+  
+}
+
+export default bookmarks
